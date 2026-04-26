@@ -5,17 +5,18 @@ from mysql.connector import Error
 import sys
 import time
 
+import os
+
 app = Flask(__name__)
 CORS(app)
 
-# Database Configuration
-# UPDATE THESE WITH YOUR MYSQL CREDENTIALS
+# Database Configuration - Uses Environment Variables for security
 DB_CONFIG = {
-    'host': 'shuttle.proxy.rlwy.net',
-    'port': 23401,
-    'user': 'root',
-    'password': 'WMUqlUowSGVkGGDBfWodEcyecJhNtztK',
-    'database': 'railway' # Railway's default DB name
+    'host': os.environ.get('MYSQLHOST', 'shuttle.proxy.rlwy.net'),
+    'port': int(os.environ.get('MYSQLPORT', 23401)),
+    'user': os.environ.get('MYSQLUSER', 'root'),
+    'password': os.environ.get('MYSQLPASSWORD', 'WMUqlUowSGVkGGDBfWodEcyecJhNtztK'),
+    'database': os.environ.get('MYSQLDATABASE', 'railway')
 }
 
 def initialize_database():
