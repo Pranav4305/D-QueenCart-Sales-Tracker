@@ -47,11 +47,12 @@ def initialize_database():
         conn.commit()
         conn.close()
         print("[OK] Database is ready!")
+        conn.commit()
+        conn.close()
+        print("[OK] Database is ready!")
     except Exception as e:
         print(f"[ERROR] Could not initialize database: {e}")
-
-# Run initialization automatically on Vercel
-initialize_database()
+        raise e
 
 def get_db_connection():
     try:
@@ -63,6 +64,11 @@ def get_db_connection():
 
 @app.route('/api/sales', methods=['GET'])
 def get_sales():
+    try:
+        initialize_database()
+    except Exception as e:
+        return jsonify({"error": f"Init failed: {str(e)}", "db_url": DATABASE_URL[:15] + "..." if DATABASE_URL else "None"}), 500
+
     conn = get_db_connection()
     if not conn:
         return jsonify({"error": "Database connection failed"}), 500
