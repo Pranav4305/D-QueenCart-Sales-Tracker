@@ -12,10 +12,10 @@ CORS(app)
 
 # Database Configuration - Uses Environment Variables for security
 DB_CONFIG = {
-    'host': os.environ.get('MYSQLHOST', 'shuttle.proxy.rlwy.net'),
-    'port': int(os.environ.get('MYSQLPORT', 23401)),
+    'host': os.environ.get('MYSQLHOST', 'shortline.proxy.rlwy.net'),
+    'port': int(os.environ.get('MYSQLPORT', 58404)),
     'user': os.environ.get('MYSQLUSER', 'root'),
-    'password': os.environ.get('MYSQLPASSWORD', 'WMUqlUowSGVkGGDBfWodEcyecJhNtztK'),
+    'password': os.environ.get('MYSQLPASSWORD', 'JdrodFLSpUDGfXVseppglYmytPvqdKDx'),
     'database': os.environ.get('MYSQLDATABASE', 'railway')
 }
 
