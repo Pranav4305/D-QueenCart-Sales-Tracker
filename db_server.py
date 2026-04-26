@@ -10,13 +10,13 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# Database Configuration
+# Database Configuration - LOCAL
 DB_CONFIG = {
-    'host': 'shortline.proxy.rlwy.net',
-    'port': 58404,
+    'host': 'localhost',
+    'port': 3306,
     'user': 'root',
-    'password': 'JdrodFLSpUDGfXVseppglYmytPvqdKDx',
-    'database': 'railway'
+    'password': '123@',
+    'database': 'sales_tracker'
 }
 
 def initialize_database():
