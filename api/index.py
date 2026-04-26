@@ -10,13 +10,13 @@ import os
 app = Flask(__name__)
 CORS(app)
 
-# Database Configuration - Uses Environment Variables for security
+# Database Configuration
 DB_CONFIG = {
-    'host': os.environ.get('MYSQLHOST', 'shortline.proxy.rlwy.net'),
-    'port': int(os.environ.get('MYSQLPORT', 58404)),
-    'user': os.environ.get('MYSQLUSER', 'root'),
-    'password': os.environ.get('MYSQLPASSWORD', 'JdrodFLSpUDGfXVseppglYmytPvqdKDx'),
-    'database': os.environ.get('MYSQLDATABASE', 'railway')
+    'host': 'shortline.proxy.rlwy.net',
+    'port': 58404,
+    'user': 'root',
+    'password': 'JdrodFLSpUDGfXVseppglYmytPvqdKDx',
+    'database': 'railway'
 }
 
 def initialize_database():
