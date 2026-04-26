@@ -47,9 +47,6 @@ def initialize_database():
         conn.commit()
         conn.close()
         print("[OK] Database is ready!")
-        conn.commit()
-        conn.close()
-        print("[OK] Database is ready!")
     except Exception as e:
         print(f"[ERROR] Could not initialize database: {e}")
         raise e
