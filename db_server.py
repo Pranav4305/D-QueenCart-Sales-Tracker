@@ -9,8 +9,8 @@ import os
 app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
-# Vercel Postgres usually provides a POSTGRES_URL environment variable
-DATABASE_URL = os.environ.get('POSTGRES_URL', 'postgresql://user:password@localhost:5432/sales_tracker')
+# Vercel/Neon Postgres usually provides a POSTGRES_URL or DATABASE_URL environment variable
+DATABASE_URL = os.environ.get('POSTGRES_URL') or os.environ.get('DATABASE_URL', 'postgresql://user:password@localhost:5432/sales_tracker')
 
 # Serve frontend
 @app.route('/')
