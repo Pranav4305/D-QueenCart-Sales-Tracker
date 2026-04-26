@@ -35,14 +35,17 @@ def initialize_database():
                 transaction_id VARCHAR(50)
             )
         """)
+        conn.commit()
         
         # Add transaction_id column if missing
         try:
             cursor.execute("ALTER TABLE sales ADD COLUMN transaction_id VARCHAR(50)")
             cursor.execute("UPDATE sales SET transaction_id = CAST(id AS VARCHAR) WHERE transaction_id IS NULL")
+            conn.commit()
             print("[OK] Migrated: added transaction_id column.")
         except Exception:
             conn.rollback()
+        
         
         conn.commit()
         conn.close()
