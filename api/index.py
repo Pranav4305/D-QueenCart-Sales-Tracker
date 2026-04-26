@@ -12,10 +12,10 @@ CORS(app)
 
 # Database Configuration
 DB_CONFIG = {
-    'host': 'shortline.proxy.rlwy.net',
-    'port': 58404,
+    'host': 'centerbeam.proxy.rlwy.net',
+    'port': 20599,
     'user': 'root',
-    'password': 'JdrodFLSpUDGfXVseppglYmytPvqdKDx',
+    'password': 'aLOpiSSUmSqpWisXVBEGVwKextaEezNS',
     'database': 'railway'
 }
 
