@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pro Sales Tracker | Premium Analytics</title>
+    <meta name="description" content="A professional-grade sales tracking dashboard with real-time analytics and category management.">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                <h1>Sales Tracker</h1>
+                <p style="color: var(--text-secondary); font-size: 0.875rem;">Enterprise Dashboard</p>
+            </div>
+            <div style="display:flex; align-items:center; gap:1.5rem;">
+                <span id="server-status" style="font-size:0.8rem; font-weight:600; color:#94a3b8;">● Connecting...</span>
+                <div class="date-display" id="current-date" style="color: var(--text-secondary); font-weight: 500;"></div>
+            </div>
+        </header>
+
+        <section class="stats-grid">
+            <div class="stat-card glass" style="animation-delay: 0.1s;">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value" id="total-revenue">₹0.00</div>
+            </div>
+            <div class="stat-card glass" style="animation-delay: 0.2s;">
+                <div class="stat-label">Total Sales</div>
+                <div class="stat-value" id="total-sales">0</div>
+            </div>
+            <div class="stat-card glass" style="animation-delay: 0.3s;">
+                <div class="stat-label">Top Category</div>
+                <div class="stat-value" id="top-category">N/A</div>
+            </div>
+        </section>
+
+        <div class="action-bar">
+            <input type="text" id="search-input" class="search-input" placeholder="Search products or categories...">
+            <button class="btn btn-primary" id="add-sale-btn">
+                <i data-lucide="plus-circle"></i>
+                Add New Sale
+            </button>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" id="tab-sales" onclick="switchTab('sales')">
+                <i data-lucide="list"></i> Sales Log
+            </button>
+            <button class="tab-btn" id="tab-analytics" onclick="switchTab('analytics')">
+                <i data-lucide="bar-chart-2"></i> Analytics
+            </button>
+        </div>
+
+        <!-- Sales Pane -->
+        <div id="pane-sales">
+            <div class="sales-container">
+                <table id="sales-table">
+                    <thead>
+                        <tr>
+                            <th>Sale ID</th>
+                            <th>Total Amount</th>
+                            <th>No. of Items</th>
+                            <th>Date</th>
+                            <th style="text-align: center;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-body">
+                        <!-- Sales will be injected here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Sale Details Modal -->
+        <div class="modal-overlay" id="sale-details-overlay">
+            <div class="modal-content glass" style="max-width: 800px;">
+                <span class="close-btn" id="close-details-modal">&times;</span>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                    <div>
+                        <h2 id="details-sale-id" style="font-weight: 700; margin-bottom: 0.25rem;">Sale #1</h2>
+                        <p id="details-sale-date" style="color: var(--text-secondary); font-size: 0.875rem;">October 24, 2023</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem;">Total Amount</p>
+                        <h2 id="details-total-amount" style="color: var(--accent-secondary); font-weight: 800;">₹0.00</h2>
+                    </div>
+                </div>
+
+                <div class="sales-container" style="max-height: 400px; overflow-y: auto;">
+                    <table style="width: 100%; border-spacing: 0;">
+                        <thead style="position: sticky; top: 0; background: var(--bg-color); z-index: 10;">
+                            <tr>
+                                <th style="padding: 1rem;">Category</th>
+                                <th>Price</th>
+                                <th>Qty</th>
+                                <th>Total</th>
+                                <th>Image</th>
+                            </tr>
+                        </thead>
+                        <tbody id="details-items-body">
+                            <!-- Items will be injected here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Pane -->
+        <div id="pane-analytics" style="display: none;">
+            <div class="analytics-grid">
+                <div class="chart-card glass">
+                    <h3 class="chart-title">Revenue Over Time</h3>
+                    <canvas id="chart-revenue"></canvas>
+                </div>
+                <div class="chart-card glass">
+                    <h3 class="chart-title">Sales by Category</h3>
+                    <canvas id="chart-category"></canvas>
+                </div>
+            </div>
+            <div class="chart-card glass" style="margin-top: 1.5rem;">
+                <h3 class="chart-title">Sales Volume by Day of Week</h3>
+                <canvas id="chart-daily" height="100"></canvas>
+            </div>
+            <div class="pattern-section">
+                <h2 class="section-title">🔍 Pattern Analyzer</h2>
+                <div class="insight-grid" id="insight-grid">
+                    <div class="insight-placeholder">Add some sales to see patterns emerge...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Sale Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-content glass" style="max-width: 700px;">
+            <span class="close-btn" id="close-modal">&times;</span>
+            <h2 style="margin-bottom: 1.5rem; font-weight: 700;">Log New Sale</h2>
+            <form id="sale-form">
+                <div class="form-group">
+                    <label>Sale Date</label>
+                    <input type="date" id="sale-date" required>
+                </div>
+
+                <div id="line-items-container">
+                    <div class="line-item" style="display: grid; grid-template-columns: 2fr 1fr 0.6fr 0.4fr; gap: 0.75rem; align-items: flex-end; margin-bottom: 1rem;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Category</label>
+                            <select class="item-category" required>
+                                <option value="Necklaces">Necklaces</option>
+                                <option value="Earrings">Earrings</option>
+                                <option value="Studs">Studs</option>
+                                <option value="Rings">Rings</option>
+                                <option value="Hair Accessories">Hair Accessories</option>
+                                <option value="Bracelets">Bracelets</option>
+                                <option value="Scrunchies">Scrunchies</option>
+                                <option value="Centre Clip">Centre Clip</option>
+                                <option value="Clutch">Clutch</option>
+                                <option value="Aligator Clip">Aligator Clip</option>
+                                <option value="TikTok Pin">TikTok Pin</option>
+                                <option value="Hair Bands">Hair Bands</option>
+                                <option value="Nails">Nails</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Price (₹)</label>
+                            <input type="number" class="item-price" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label>Qty</label>
+                            <input type="number" class="item-qty" value="1" min="1" required>
+                        </div>
+                        <div style="height: 42px; display: flex; align-items: center; justify-content: center;">
+                            <!-- First item can't be removed -->
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" id="add-item-row" class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-primary); margin-bottom: 1.5rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
+                    <i data-lucide="plus"></i> Add Another Product
+                </button>
+
+                <div class="glass" style="padding: 1rem; border-radius: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600; color: var(--text-secondary);">Grand Total:</span>
+                    <span id="grand-total-display" style="font-size: 1.25rem; font-weight: 800; color: var(--accent-secondary);">₹0.00</span>
+                </div>
+
+                <div class="form-group">
+                    <label>Group Image (Optional)</label>
+                    <div class="img-preview" id="img-dropzone" style="height: 100px;">
+                        <span id="preview-text">Click to upload image</span>
+                        <img id="preview-img" style="display: none;">
+                        <input type="file" id="image-input" accept="image/*" style="display: none;">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                    Record All Sales
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Sale Modal -->
+    <div class="modal-overlay" id="edit-sale-overlay">
+        <div class="modal-content glass">
+            <span class="close-btn" id="close-edit-modal">&times;</span>
+            <h2 style="margin-bottom: 2rem; font-weight: 700;">Edit Sale</h2>
+            <form id="edit-sale-form">
+                <input type="hidden" id="edit-sale-id">
+                <div class="form-group">
+                    <label>Category</label>
+                    <select id="edit-category" required>
+                        <option value="">Select Category</option>
+                        <option value="Necklaces">Necklaces</option>
+                        <option value="Earrings">Earrings</option>
+                        <option value="Studs">Studs</option>
+                        <option value="Rings">Rings</option>
+                        <option value="Hair Accessories">Hair Accessories</option>
+                        <option value="Bracelets">Bracelets</option>
+                        <option value="Scrunchies">Scrunchies</option>
+                        <option value="Centre Clip">Centre Clip</option>
+                        <option value="Clutch">Clutch</option>
+                        <option value="Aligator Clip">Aligator Clip</option>
+                        <option value="TikTok Pin">TikTok Pin</option>
+                        <option value="Hair Bands">Hair Bands</option>
+                        <option value="Nails">Nails</option>
+                    </select>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Price (₹)</label>
+                        <input type="number" id="edit-price" step="0.01" required placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Quantity</label>
+                        <input type="number" id="edit-quantity" min="1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Sale Date</label>
+                    <input type="date" id="edit-sale-date" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                    Update Sale
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Image Modal -->
+    <div class="modal-overlay" id="edit-img-overlay">
+        <div class="modal-content glass">
+            <span class="close-btn" id="close-edit-img-modal">&times;</span>
+            <h2 style="margin-bottom: 0.5rem; font-weight: 700;">Update Image</h2>
+            <p style="color: var(--text-secondary); font-size: 0.875rem; margin-bottom: 2rem;">Upload or replace the image for this sale.</p>
+            <div class="form-group">
+                <div class="img-preview" id="edit-img-dropzone">
+                    <span id="edit-preview-text">Click to upload image</span>
+                    <img id="edit-preview-img" style="display: none; max-width: 100%; max-height: 100%; object-fit: contain;">
+                    <input type="file" id="edit-image-input" accept="image/*" style="display: none;">
+                </div>
+            </div>
+            <button id="save-img-btn" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                <i data-lucide="save"></i>
+                Save Image
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>
