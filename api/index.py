@@ -50,6 +50,9 @@ def initialize_database():
     except Exception as e:
         print(f"[ERROR] Could not initialize database: {e}")
 
+# Run initialization automatically on Vercel
+initialize_database()
+
 def get_db_connection():
     try:
         connection = psycopg2.connect(DATABASE_URL)
