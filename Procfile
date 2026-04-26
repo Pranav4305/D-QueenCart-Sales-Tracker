@@ -1,1 +1,2 @@
-web: python db_server.py
+web: echo "No web service needed - using Vercel"
+
