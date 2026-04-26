@@ -1,23 +1,28 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import mysql.connector
 from mysql.connector import Error
 import sys
 import time
-
 import os
 
-app = Flask(__name__)
+# Serve static files from the root directory
+app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app)
 
-# Database Configuration - LOCAL
+# Database Configuration - uses env vars (Railway) with local fallback
 DB_CONFIG = {
-    'host': 'localhost',
-    'port': 3306,
-    'user': 'root',
-    'password': '123@',
-    'database': 'sales_tracker'
+    'host': os.environ.get('MYSQLHOST', 'localhost'),
+    'port': int(os.environ.get('MYSQLPORT', 3306)),
+    'user': os.environ.get('MYSQLUSER', 'root'),
+    'password': os.environ.get('MYSQLPASSWORD', '123@'),
+    'database': os.environ.get('MYSQLDATABASE', 'sales_tracker')
 }
+
+# Serve frontend
+@app.route('/')
+def index():
+    return send_from_directory('.', 'index.html')
 
 def initialize_database():
     """Auto-creates the database and table if they don't exist."""
@@ -207,9 +212,10 @@ def delete_transaction(t_id):
         conn.close()
 
 if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
     print("\n" + "="*50)
     print("  Sales Tracker MySQL Backend")
-    print("  Running on: http://localhost:5000")
+    print(f"  Running on port: {port}")
     print("="*50 + "\n")
     initialize_database()  # Auto-create DB and table on startup
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=port, debug=False)
