@@ -263,12 +263,12 @@ function createLineItemRow(isFirst=false, num=1) {
             </div>
             <div class="line-item-row2">
                 <div class="form-group" style="margin-bottom:0">
-                    <label>Price (₹)</label>
-                    <input type="number" class="item-price" step=".01" min="0.01" required placeholder="0.00" oninput="updateGrandTotal()">
-                </div>
-                <div class="form-group" style="margin-bottom:0">
                     <label>Quantity</label>
                     <input type="number" class="item-qty" value="1" min="1" required oninput="updateGrandTotal()">
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                    <label>Price (₹)</label>
+                    <input type="number" class="item-price" step=".01" min="0.01" required placeholder="0.00" oninput="updateGrandTotal()">
                 </div>
             </div>
         </div>
