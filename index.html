@@ -9,12 +9,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
 <body>
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
     <div class="container">
         <header>
             <div class="brand">
@@ -29,22 +30,23 @@
 
         <section class="stats-grid">
             <div class="stat-card glass" style="animation-delay: 0.1s;">
-                <div class="stat-label">Total Revenue</div>
-                <div class="stat-value" id="total-revenue">₹0.00</div>
+                <div class="stat-label" id="revenue-label">Total Revenue</div>
+                <div class="stat-value" id="total-revenue">₹0</div>
             </div>
             <div class="stat-card glass" style="animation-delay: 0.2s;">
-                <div class="stat-label">Total Sales</div>
+                <div class="stat-label" id="sales-label">Total Sales</div>
                 <div class="stat-value" id="total-sales">0</div>
             </div>
             <div class="stat-card glass" style="animation-delay: 0.3s;">
-                <div class="stat-label">Top Category</div>
+                <div class="stat-label" id="category-label">Top Category</div>
                 <div class="stat-value" id="top-category">N/A</div>
             </div>
         </section>
 
-        <div class="action-bar" style="display: flex; gap: 1rem;">
-            <input type="text" id="search-input" class="search-input" placeholder="Search products or categories..." style="flex: 1;">
+        <div class="action-bar">
+            <input type="text" id="search-input" class="search-input" placeholder="Search products or categories...">
             <input type="date" id="filter-date" class="search-input" style="width: auto; flex: none;" title="Filter by date">
+            <button id="clear-date-btn" title="Clear date filter">✕ Clear Filter</button>
             <button class="btn btn-primary" id="add-sale-btn" style="flex: none;">
                 <i data-lucide="plus-circle"></i>
                 Add New Sale
@@ -63,7 +65,14 @@
 
         <!-- Sales Pane -->
         <div id="pane-sales">
-            <div class="sales-container">
+            <!-- Loading Skeleton -->
+            <div id="loading-skeleton">
+                <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+                <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+                <div class="skeleton-row"><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div><div class="skeleton-cell"></div></div>
+            </div>
+            <!-- Table -->
+            <div id="table-wrapper" class="sales-container">
                 <table id="sales-table">
                     <thead>
                         <tr>
@@ -74,9 +83,7 @@
                             <th style="text-align: center;">Actions</th>
                         </tr>
                     </thead>
-                    <tbody id="sales-body">
-                        <!-- Sales will be injected here -->
-                    </tbody>
+                    <tbody id="sales-body"></tbody>
                 </table>
             </div>
         </div>
@@ -88,14 +95,13 @@
                 <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
                     <div>
                         <h2 id="details-sale-id" style="font-weight: 700; margin-bottom: 0.25rem;">Sale #1</h2>
-                        <p id="details-sale-date" style="color: var(--text-secondary); font-size: 0.875rem;">October 24, 2023</p>
+                        <p id="details-sale-date" style="color: var(--text-secondary); font-size: 0.875rem;"></p>
                     </div>
                     <div style="text-align: right;">
                         <p style="color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.25rem;">Total Amount</p>
                         <h2 id="details-total-amount" style="color: var(--accent-secondary); font-weight: 800;">₹0.00</h2>
                     </div>
                 </div>
-
                 <div class="sales-container" style="max-height: 400px; overflow-y: auto;">
                     <table style="width: 100%; border-spacing: 0;">
                         <thead style="position: sticky; top: 0; background: var(--bg-color); z-index: 10;">
@@ -107,9 +113,7 @@
                                 <th>Image</th>
                             </tr>
                         </thead>
-                        <tbody id="details-items-body">
-                            <!-- Items will be injected here -->
-                        </tbody>
+                        <tbody id="details-items-body"></tbody>
                     </table>
                 </div>
             </div>
@@ -150,50 +154,14 @@
                     <label>Sale Date</label>
                     <input type="date" id="sale-date" required>
                 </div>
-
-                <div id="line-items-container">
-                    <div class="line-item" style="display: grid; grid-template-columns: 2fr 1fr 0.6fr 0.4fr; gap: 0.75rem; align-items: flex-end; margin-bottom: 1rem;">
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Category</label>
-                            <select class="item-category" required>
-                                <option value="Necklaces">Necklaces</option>
-                                <option value="Earrings">Earrings</option>
-                                <option value="Studs">Studs</option>
-                                <option value="Rings">Rings</option>
-                                <option value="Hair Accessories">Hair Accessories</option>
-                                <option value="Bracelets">Bracelets</option>
-                                <option value="Scrunchies">Scrunchies</option>
-                                <option value="Centre Clip">Centre Clip</option>
-                                <option value="Clutch">Clutch</option>
-                                <option value="Aligator Clip">Aligator Clip</option>
-                                <option value="TikTok Pin">TikTok Pin</option>
-                                <option value="Hair Bands">Hair Bands</option>
-                                <option value="Nails">Nails</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Price (₹)</label>
-                            <input type="number" class="item-price" step="0.01" required placeholder="0.00">
-                        </div>
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label>Qty</label>
-                            <input type="number" class="item-qty" value="1" min="1" required>
-                        </div>
-                        <div style="height: 42px; display: flex; align-items: center; justify-content: center;">
-                            <!-- First item can't be removed -->
-                        </div>
-                    </div>
-                </div>
-
+                <div id="line-items-container"></div>
                 <button type="button" id="add-item-row" class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-primary); margin-bottom: 1.5rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
                     <i data-lucide="plus"></i> Add Another Product
                 </button>
-
                 <div class="glass" style="padding: 1rem; border-radius: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
                     <span style="font-weight: 600; color: var(--text-secondary);">Grand Total:</span>
                     <span id="grand-total-display" style="font-size: 1.25rem; font-weight: 800; color: var(--accent-secondary);">₹0.00</span>
                 </div>
-
                 <div class="form-group">
                     <label>Group Image (Optional)</label>
                     <div class="img-preview" id="img-dropzone" style="height: 100px;">
@@ -218,22 +186,7 @@
                 <input type="hidden" id="edit-sale-id">
                 <div class="form-group">
                     <label>Category</label>
-                    <select id="edit-category" required>
-                        <option value="">Select Category</option>
-                        <option value="Necklaces">Necklaces</option>
-                        <option value="Earrings">Earrings</option>
-                        <option value="Studs">Studs</option>
-                        <option value="Rings">Rings</option>
-                        <option value="Hair Accessories">Hair Accessories</option>
-                        <option value="Bracelets">Bracelets</option>
-                        <option value="Scrunchies">Scrunchies</option>
-                        <option value="Centre Clip">Centre Clip</option>
-                        <option value="Clutch">Clutch</option>
-                        <option value="Aligator Clip">Aligator Clip</option>
-                        <option value="TikTok Pin">TikTok Pin</option>
-                        <option value="Hair Bands">Hair Bands</option>
-                        <option value="Nails">Nails</option>
-                    </select>
+                    <select id="edit-category" required></select>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
                     <div class="form-group">
@@ -270,15 +223,12 @@
                 </div>
             </div>
             <button id="save-img-btn" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
-                <i data-lucide="save"></i>
-                Save Image
+                <i data-lucide="save"></i> Save Image
             </button>
         </div>
     </div>
 
     <script src="app.js"></script>
-    <script>
-        lucide.createIcons();
-    </script>
+    <script>lucide.createIcons();</script>
 </body>
 </html>
