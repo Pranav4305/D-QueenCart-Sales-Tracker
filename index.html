@@ -42,9 +42,10 @@
             </div>
         </section>
 
-        <div class="action-bar">
-            <input type="text" id="search-input" class="search-input" placeholder="Search products or categories...">
-            <button class="btn btn-primary" id="add-sale-btn">
+        <div class="action-bar" style="display: flex; gap: 1rem;">
+            <input type="text" id="search-input" class="search-input" placeholder="Search products or categories..." style="flex: 1;">
+            <input type="date" id="filter-date" class="search-input" style="width: auto; flex: none;" title="Filter by date">
+            <button class="btn btn-primary" id="add-sale-btn" style="flex: none;">
                 <i data-lucide="plus-circle"></i>
                 Add New Sale
             </button>

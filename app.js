@@ -11,6 +11,7 @@ const totalRevenueEl = document.getElementById('total-revenue');
 const totalSalesEl = document.getElementById('total-sales');
 const topCategoryEl = document.getElementById('top-category');
 const searchInput = document.getElementById('search-input');
+const filterDateInput = document.getElementById('filter-date');
 const addSaleBtn = document.getElementById('add-sale-btn');
 const modalOverlay = document.getElementById('modal-overlay');
 const closeModal = document.getElementById('close-modal');
@@ -98,10 +99,16 @@ function setCurrentDate() {
 function renderSales(filter = '') {
     salesBody.innerHTML = '';
     
-    const filteredTransactions = transactions.filter(t => 
+    const filterDate = document.getElementById('filter-date')?.value;
+    
+    let filteredTransactions = transactions.filter(t => 
         t.items.some(item => item.category.toLowerCase().includes(filter.toLowerCase())) ||
         `Sale #${t.display_id}`.toLowerCase().includes(filter.toLowerCase())
     );
+
+    if (filterDate) {
+        filteredTransactions = filteredTransactions.filter(t => t.date && t.date.startsWith(filterDate));
+    }
 
     filteredTransactions.forEach((t) => {
         const tr = document.createElement('tr');
@@ -180,11 +187,17 @@ window.deleteTransaction = async (tid) => {
 
 // Update Dashboard Stats
 function updateStats() {
-    const totalRevenue = sales.reduce((sum, sale) => sum + (sale.price * sale.quantity), 0);
-    const totalSalesCount = sales.length;
+    const filterDate = document.getElementById('filter-date')?.value;
+    let filteredSales = sales;
+    if (filterDate) {
+        filteredSales = sales.filter(s => s.date && s.date.startsWith(filterDate));
+    }
+
+    const totalRevenue = filteredSales.reduce((sum, sale) => sum + (sale.price * sale.quantity), 0);
+    const totalSalesCount = filteredSales.length;
     
     const categoryCounts = {};
-    sales.forEach(sale => {
+    filteredSales.forEach(sale => {
         categoryCounts[sale.category] = (categoryCounts[sale.category] || 0) + 1;
     });
     
@@ -379,6 +392,14 @@ window.deleteSale = async (id) => {
 
 // Search Logic
 searchInput.oninput = (e) => renderSales(e.target.value);
+
+// Filter Date Logic
+if (filterDateInput) {
+    filterDateInput.onchange = () => {
+        updateStats();
+        renderSales(searchInput.value);
+    };
+}
 
 // =====================
 // Edit Image Modal Logic
