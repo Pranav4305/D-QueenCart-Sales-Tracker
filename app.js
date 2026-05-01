@@ -250,19 +250,34 @@ window.deleteTransaction = async tid => {
 };
 
 // ── ADD SALE MODAL ────────────────────────────────────────
-function createLineItemRow(isFirst=false) {
-    return `<div class="line-item" style="display:grid;grid-template-columns:2fr 1fr .6fr .4fr;gap:.75rem;align-items:flex-end;margin-bottom:1rem">
-        <div class="form-group" style="margin-bottom:0"><label>Category</label><select class="item-category" required>${buildOptions()}</select></div>
-        <div class="form-group" style="margin-bottom:0"><label>Price (₹)</label><input type="number" class="item-price" step=".01" required placeholder="0.00" oninput="updateGrandTotal()"></div>
-        <div class="form-group" style="margin-bottom:0"><label>Qty</label><input type="number" class="item-qty" value="1" min="1" required oninput="updateGrandTotal()"></div>
-        <div style="height:42px;display:flex;align-items:center;justify-content:center">${!isFirst?`<button type="button" class="remove-row" style="background:none;border:none;color:#ef4444;cursor:pointer"><i data-lucide="x"></i></button>`:''}</div>
+function createLineItemRow(isFirst=false, num=1) {
+    return `<div class="line-item-card">
+        <div class="line-item-header">
+            <span class="line-item-number">Item ${num}</span>
+            ${!isFirst ? `<button type="button" class="remove-row" title="Remove item"><i data-lucide="x" style="width:14px;height:14px"></i></button>` : '<span></span>'}
+        </div>
+        <div class="line-item-fields">
+            <div class="form-group" style="margin-bottom:0">
+                <label>Category</label>
+                <select class="item-category" required>${buildOptions()}</select>
+            </div>
+            <div class="line-item-row2">
+                <div class="form-group" style="margin-bottom:0">
+                    <label>Price (₹)</label>
+                    <input type="number" class="item-price" step=".01" min="0.01" required placeholder="0.00" oninput="updateGrandTotal()">
+                </div>
+                <div class="form-group" style="margin-bottom:0">
+                    <label>Quantity</label>
+                    <input type="number" class="item-qty" value="1" min="1" required oninput="updateGrandTotal()">
+                </div>
+            </div>
+        </div>
     </div>`;
 }
 
 addSaleBtn.onclick = () => {
-    // Show selected date in modal header
     document.getElementById('modal-date-display').textContent = `📅 ${formatDate(selectedDate)}`;
-    lineItemsContainer.innerHTML = createLineItemRow(true);
+    lineItemsContainer.innerHTML = createLineItemRow(true, 1);
     updateGrandTotal();
     modalOverlay.style.display='flex';
     lucide.createIcons();
@@ -271,15 +286,25 @@ closeModal.onclick = closeModalAction;
 
 function closeModalAction() {
     modalOverlay.style.display='none'; saleForm.reset();
-    lineItemsContainer.innerHTML = createLineItemRow(true); updateGrandTotal();
-    currentImageBase64=null; previewImg.src=''; previewImg.style.display='none'; previewText.style.display='block';
+    lineItemsContainer.innerHTML = createLineItemRow(true, 1); updateGrandTotal();
+    currentImageBase64=null;
+    previewImg.src=''; previewImg.style.display='none';
+    previewText.style.display='block';
+    document.querySelector('#img-dropzone > span:first-of-type').style.display='block';
 }
 
 addItemBtn.onclick = () => {
-    const d=document.createElement('div'); d.innerHTML=createLineItemRow(false);
+    const count = lineItemsContainer.querySelectorAll('.line-item-card').length + 1;
+    const d=document.createElement('div'); d.innerHTML=createLineItemRow(false, count);
     const row=d.firstElementChild; lineItemsContainer.appendChild(row);
-    row.querySelector('.remove-row')?.addEventListener('click',()=>{ row.remove(); updateGrandTotal(); });
+    row.querySelector('.remove-row')?.addEventListener('click', () => {
+        row.remove();
+        // Re-number remaining items
+        lineItemsContainer.querySelectorAll('.line-item-number').forEach((el, i) => el.textContent = `Item ${i+1}`);
+        updateGrandTotal();
+    });
     lucide.createIcons();
+    lineItemsContainer.scrollTop = lineItemsContainer.scrollHeight;
 };
 
 window.updateGrandTotal = () => {

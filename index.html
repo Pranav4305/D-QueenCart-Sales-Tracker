@@ -159,27 +159,30 @@
     <!-- Add Sale Modal -->
     <div class="modal-overlay" id="modal-overlay">
         <div class="modal-content glass" style="max-width: 700px;">
+            <div class="modal-drag-handle"></div>
             <span class="close-btn" id="close-modal">&times;</span>
-            <h2 style="margin-bottom: 0.5rem; font-weight: 700;">Log New Sale</h2>
-            <p id="modal-date-display" style="color: var(--accent-secondary); font-size: 0.9rem; font-weight: 600; margin-bottom: 1.5rem;"></p>
+            <h2 style="margin-bottom: 0.25rem; font-weight: 700; padding-right: 2.5rem;">Log New Sale</h2>
+            <p id="modal-date-display" style="color: var(--accent-secondary); font-size: 0.875rem; font-weight: 600; margin-bottom: 1.5rem;"></p>
             <form id="sale-form">
                 <div id="line-items-container"></div>
-                <button type="button" id="add-item-row" class="btn" style="background: rgba(255,255,255,0.05); color: var(--text-primary); margin-bottom: 1.5rem; font-size: 0.85rem; padding: 0.5rem 1rem;">
-                    <i data-lucide="plus"></i> Add Another Product
+                <button type="button" id="add-item-row" class="add-item-btn">
+                    <i data-lucide="plus" style="width:16px"></i> Add Another Product
                 </button>
-                <div class="glass" style="padding: 1rem; border-radius: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-weight: 600; color: var(--text-secondary);">Grand Total:</span>
-                    <span id="grand-total-display" style="font-size: 1.25rem; font-weight: 800; color: var(--accent-secondary);">₹0.00</span>
+                <div class="grand-total-bar">
+                    <span style="font-weight: 600; color: var(--text-secondary); font-size: 0.875rem;">Grand Total</span>
+                    <span id="grand-total-display" style="font-size: 1.35rem; font-weight: 800; color: var(--accent-secondary);">₹0.00</span>
                 </div>
                 <div class="form-group">
-                    <label>Group Image (Optional)</label>
-                    <div class="img-preview" id="img-dropzone" style="height: 100px;">
-                        <span id="preview-text">Click to upload image</span>
+                    <label>Group Image <span style="color:var(--text-secondary);font-weight:400;text-transform:none;font-size:0.75rem;">(Optional)</span></label>
+                    <div class="img-preview" id="img-dropzone">
+                        <span style="font-size:1.5rem;">📷</span>
+                        <span id="preview-text">Tap to upload image</span>
                         <img id="preview-img" style="display: none;">
                         <input type="file" id="image-input" accept="image/*" style="display: none;">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 0.5rem; padding: 1rem;">
+                    <i data-lucide="check-circle" style="width:18px"></i>
                     Record All Sales
                 </button>
             </form>
