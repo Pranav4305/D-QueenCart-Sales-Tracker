@@ -324,7 +324,7 @@ imageInput.onchange = e => {
 saleForm.onsubmit = async e => {
     e.preventDefault();
     const items=[];
-    document.querySelectorAll('.line-item').forEach(row=>{
+    document.querySelectorAll('.line-item-card').forEach(row=>{
         const price=parseFloat(row.querySelector('.item-price').value);
         const qty=parseInt(row.querySelector('.item-qty').value);
         if(price>0&&qty>=1) items.push({category:row.querySelector('.item-category').value,price,quantity:qty,date:selectedDate,image:currentImageBase64});
